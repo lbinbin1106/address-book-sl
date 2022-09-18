@@ -1,0 +1,68 @@
+version: '3.5'
+volumes:
+  dbvol:
+  staticvol:
+
+networks:
+  default:
+    external:
+      name: front_default
+
+services:
+  australia-addressbook-api:
+    container_name: australia-addressbook-api
+    image: australia-addressbook-api
+    build: .
+    environment:
+      API_DB_HOST: australia-addressbook-db
+      API_DB_PORT: 5432
+      API_DB_USER: australia-addressbook
+      API_DB_PASS: australia-addressbook
+      API_DB_NAME: australia-addressbook
+      DB_INIT_DATA: "true"
+      VERSION: v1
+    volumes:
+      - ./apps/:/src/apps/
+      - ./main/:/src/main/
+      - ./htmlcov/:/src/htmlcov/
+      - .coveragerc:/src/.coveragerc
+      - staticvol:/src/staticfiles
+    depends_on:
+      - australia-addressbook-db
+    expose:
+      - 8007
+
+  australia-addressbook-db:
+    container_name: australia-addressbook-db
+    image: postgres:11.0
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_PASSWORD: australia-addressbook
+      POSTGRES_USER: australia-addressbook
+      POSTGRES_DB: australia-addressbook
+    volumes:
+      - dbvol:/var/lib/postgresql/data
+
+  australia-addressbook-locust:
+    container_name: australia-addressbook-locust
+    build: locust
+    environment:
+      ADDRESSBOOK_API: http://australia-addressbook-api:8007
+    volumes:
+      - ./locust/:/src/locust/
+    depends_on:
+      - australia-addressbook-api
+    ports:
+      - "8089:8089"
+
+  australia-nginx:
+    container_name: australia-nginx
+    build: ./nginx
+    volumes:
+      - staticvol:/src/staticfiles
+    ports:
+      - 1337:80
+    depends_on:
+      - australia-addressbook-api
+
