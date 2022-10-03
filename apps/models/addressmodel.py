@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 import datetime
 class AddressModel(models.Model):
@@ -6,6 +7,7 @@ class AddressModel(models.Model):
     first_name = models.CharField(max_length=255, null=False)
     last_name = models.CharField(max_length=255, null=False)
     phone  = models.CharField(max_length=255, null=False)
+    state = models.CharField(max_length=3, null=False, default="VIC")
     created_at = models.DateTimeField(null=True)
 
     def __str__(self):

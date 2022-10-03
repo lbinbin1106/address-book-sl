@@ -22,7 +22,8 @@ def address(request):
     address =  AddressModel.objects.create(
      first_name="Jessica",
      last_name="Mo",
-     phone="0425 266 866")
+     phone="0425 266 866",
+     state="VIC")
     return address
 
 class TestAddress:
@@ -36,11 +37,11 @@ class TestAddress:
     assert response.status_code == 200
 
   def test_post_request(self, client):
-    success_data = {'first_name' : 'Jason', 'last_name': 'Piere', 'phone': '0426 781 881'}
+    success_data = {'first_name' : 'Jason', 'last_name': 'Piere', 'state':'VIC', 'phone': '0426 781 881'}
     response = client.post( reverse(settings.VERSION+':addressList'), success_data)
     assert response.status_code == 201
 
-    failed_data = {'middle_name' : 'Jason', 'last_name': 'Piere', 'mobile': '0426 781 881'}
+    failed_data = {'middle_name' : 'Jason', 'last_name': 'Piere', 'state':'VIC', 'mobile': '0426 781 881'}
     response = client.post( reverse(settings.VERSION+':addressList'), failed_data)
     assert response.status_code == 400
 

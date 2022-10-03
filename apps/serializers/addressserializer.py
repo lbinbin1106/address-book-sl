@@ -9,7 +9,7 @@ class AddressSerializer(SerializerCacheMixin, serializers.ModelSerializer):
     class Meta:
         """Meta class to map serializer's fields with the model fields."""
         model = AddressModel
-        fields = ('id', 'first_name', 'last_name', 'phone', 'created_at')
+        fields = ('id', 'first_name', 'last_name', 'phone', 'state', 'created_at')
 
     def validate_first_name(self, value):
         """Validate on first name field"""
